@@ -1,0 +1,14 @@
+# IDE
+.idea
+
+# Logs
+*.log
+*.txt
+
+# Maven
+todoApp/target
+todoApp/wars
+
+# dot-files
+.env
+.DS_Store

@@ -1,0 +1,7 @@
+FROM tomcat:8.5-jdk8-temurin
+
+LABEL maintainer=ehlui
+
+LABEL jee=7
+
+WORKDIR $CATALINA_HOME/webapps
