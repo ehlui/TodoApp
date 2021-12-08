@@ -24,7 +24,6 @@ public class TaskDaoImp implements Dao<Task> {
         this.connection = connection;
     }
 
-
     @Override
     public Task find(int id) {
         if (id < 1)

@@ -8,7 +8,7 @@ import java.util.List;
  *  <p>A repository interface to define our CRUD operations</p>
  * @param <T>
  */
-public interface CrudRepository<T> {
+public interface Repository<T> {
 
     T find(int id);
 
