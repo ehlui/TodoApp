@@ -49,7 +49,7 @@ public class AddTask extends HttpServlet {
         this.taskRepository.create(task);
         req.setAttribute("taskList", taskRepository.findAll());
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("tasks-list.jsp");
-        requestDispatcher.forward(req, resp);
+        req.getSession().setAttribute("taskList", taskRepository.findAll());
+        resp.sendRedirect("tasks-list.jsp");
     }
 }
