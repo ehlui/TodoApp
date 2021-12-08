@@ -1,15 +1,10 @@
 package com.ehlui.repository;
 
 import com.ehlui.dao.Dao;
-import com.ehlui.dao.TaskDaoImp;
 import com.ehlui.model.Task;
 
-
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
