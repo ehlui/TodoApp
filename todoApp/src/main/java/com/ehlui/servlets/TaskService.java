@@ -7,7 +7,6 @@ import com.ehlui.repository.Repository;
 import com.ehlui.repository.TaskRepositoryImp;
 
 import javax.annotation.Resource;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,6 +24,13 @@ public class AddTask extends HttpServlet {
 
     private Repository<Task> taskRepository;
 
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        injectConnectionToRepository();
+
+    }
+
     /**
      * It makes the dependency injection directly to its dependencies
      *
@@ -39,9 +45,9 @@ public class AddTask extends HttpServlet {
         }
     }
 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        injectConnectionToRepository();
         // TODO: Add a Servlet Filter for "Name" field (if its empty make some warning)
         String name = req.getParameter("task-name");
         String desc = req.getParameter("task-description");
@@ -52,4 +58,11 @@ public class AddTask extends HttpServlet {
         req.getSession().setAttribute("taskList", taskRepository.findAll());
         resp.sendRedirect("tasks-list.jsp");
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.taskRepository.delete(13);
+        resp.setStatus(200);
+    }
 }
+

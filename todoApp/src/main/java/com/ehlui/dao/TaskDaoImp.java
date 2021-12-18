@@ -30,13 +30,13 @@ public class TaskDaoImp implements Dao<Task> {
             return null;
 
         Task task = null;
-        final String query = "SELECT * FROM Task where id = ?;";
+        final String query = "SELECT id, name, description description FROM Task where id = ?;";
         try (PreparedStatement pst = connection.prepareStatement(query)) {
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             rs.next();
             if (rs.isLast())
-                task = new Task(rs.getString(1), rs.getString(2));
+                task = new Task(rs.getInt(1), rs.getString(3), rs.getString(3));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -47,10 +47,10 @@ public class TaskDaoImp implements Dao<Task> {
     public List<Task> find() {
         List<Task> tasks = null;
         try (Statement st = connection.createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM Task; ")) {
+             ResultSet rs = st.executeQuery("SELECT id, name, description FROM Task; ")) {
             tasks = new ArrayList<>();
             while (rs.next())
-                tasks.add(new Task(rs.getString(2), rs.getString(3)));
+                tasks.add(new Task(rs.getInt(1), rs.getString(2), rs.getString(3)));
         } catch (SQLException e) {
             e.printStackTrace();
         }
