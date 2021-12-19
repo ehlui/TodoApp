@@ -71,8 +71,8 @@ public class TaskService extends HttpServlet {
         String desc = req.getParameter("task-description");
         Task task = new Task(name, desc);
         this.taskRepository.create(task);
-        req.setAttribute("taskList", taskRepository.findAll());
 
+        req.setAttribute("taskList", taskRepository.findAll());
         req.getSession().setAttribute("taskList", taskRepository.findAll());
         resp.sendRedirect("tasks-list.jsp");
     }
@@ -81,13 +81,9 @@ public class TaskService extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String body = inputStreamToString(req.getInputStream());
         // TODO: Use the id from the body and update (if it's not null) the tasks to update
-        Task t = this.gson.fromJson(body,Task.class);
-        t.setName("New");// For now, just testing whether it works...
-        PrintWriter out = resp.getWriter();
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        out.print(this.gson.toJson(t));
-        out.flush();
+        Task taskToUpdate = this.gson.fromJson(body,Task.class);
+        this.taskRepository.update(taskToUpdate);
+        doGet(req,resp);
     }
 
     // TODO: Make a doPatch for updating partially a Task (a field as name only for instance)
@@ -97,14 +93,12 @@ public class TaskService extends HttpServlet {
         int userId = retrieveUserid(req);
         this.taskRepository.delete(userId);
         resp.setStatus(200);
-
     }
 
     private static int retrieveUserid(HttpServletRequest req) {
         String pathInfo = req.getPathInfo();
-        if (pathInfo.startsWith("/")) {
+        if (pathInfo.startsWith("/"))
             pathInfo = pathInfo.substring(1);
-        }
         return Integer.parseInt(pathInfo);
     }
 
