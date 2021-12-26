@@ -16,7 +16,7 @@ public interface Repository<T> {
 
     void create(T t);
 
-    void delete(int id);
+    boolean delete(int id);
 
     void update(T t);
 
