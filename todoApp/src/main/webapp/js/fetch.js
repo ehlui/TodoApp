@@ -15,7 +15,7 @@ export async function updateTask(taskId, taskName, taskDesc) {
 }
 
 export async function createTask(taskName, taskDesc) {
-    const newTask = { id: taskId, name: taskName, description: taskDesc }
+    const newTask = { name: taskName, description: taskDesc }
     await fetch(TASK_SERVICE_URL, {
         method: "POST",
         body: JSON.stringify(newTask)
