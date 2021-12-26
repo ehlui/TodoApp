@@ -1,17 +1,24 @@
+import { getTasks } from "./fetch.js"
 // Globals
-const TASK_SERVICE_LOCAL_URL = "http://localhost:8118/todoApp/TaskService"
 const TASK_LIST_CONTAINER_ID = "tasksList"
 const BUTTON_SHOW_TASKS_ID = "showTasks"
 const CONTAINER_SELECTOR = "div.container"
 
 
-const btnShowTasks = document.getElementById(BUTTON_SHOW_TASKS_ID);
-btnShowTasks.addEventListener("click", async e => {
+
+
+
+async function RetrieveAndBuildTasksList() {
     deleteListIfExists()
     const tasksList = await getTasks()
     buildUlList(tasksList);
-});
+}
 
+
+const btnShowTasks = document.getElementById(BUTTON_SHOW_TASKS_ID);
+btnShowTasks.addEventListener("click", async e => {
+    RetrieveAndBuildTasksList();
+});
 
 
 function buildUlList(listOfObjects) {
@@ -45,13 +52,4 @@ function deleteListIfExists() {
 }
 
 
-async function getTasks() {
-    // TODO: Check why from other "localhost" we have no access to the servlet
-    const options = {
-        mode: 'cors',
-        headers: {
-            'Access-Control-Allow-Origin': 'origin-list'
-        }
-    }
-    return (await fetch(TASK_SERVICE_LOCAL_URL, options)).json();
-}
+RetrieveAndBuildTasksList()
