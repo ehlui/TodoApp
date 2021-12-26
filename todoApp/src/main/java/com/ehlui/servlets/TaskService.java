@@ -14,12 +14,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
+
 
 @WebServlet(description = "Add a new task controller", urlPatterns = {"/TaskService/*"})
 public class TaskService extends HttpServlet {
@@ -67,32 +69,33 @@ public class TaskService extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO: Add a Servlet Filter for "Name" field (if its empty make some warning)
-        String name = req.getParameter("task-name");
-        String desc = req.getParameter("task-description");
-        Task task = new Task(name, desc);
-        this.taskRepository.create(task);
-
-        req.setAttribute("taskList", taskRepository.findAll());
-        req.getSession().setAttribute("taskList", taskRepository.findAll());
-        resp.sendRedirect("tasks-list.jsp");
+        String body = inputStreamToString(req.getInputStream());
+        Task taskToUpdate = this.gson.fromJson(body, Task.class);
+        this.taskRepository.create(taskToUpdate);
+        doGet(req, resp);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String body = inputStreamToString(req.getInputStream());
         // TODO: Use the id from the body and update (if it's not null) the tasks to update
-        Task taskToUpdate = this.gson.fromJson(body,Task.class);
+        Task taskToUpdate = this.gson.fromJson(body, Task.class);
         this.taskRepository.update(taskToUpdate);
-        doGet(req,resp);
+        doGet(req, resp);
     }
 
     // TODO: Make a doPatch for updating partially a Task (a field as name only for instance)
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        boolean isDeleted;
+        int statusCode = Response.Status.OK.getStatusCode();
         int userId = retrieveUserid(req);
-        this.taskRepository.delete(userId);
-        resp.setStatus(200);
+
+        isDeleted = this.taskRepository.delete(userId);
+        if (!isDeleted)
+            statusCode = Response.Status.CONFLICT.getStatusCode();
+        resp.setStatus(statusCode);
     }
 
     private static int retrieveUserid(HttpServletRequest req) {

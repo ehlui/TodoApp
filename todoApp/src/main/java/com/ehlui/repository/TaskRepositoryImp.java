@@ -44,8 +44,8 @@ public class TaskRepositoryImp implements Repository<Task> {
     }
 
     @Override
-    public void delete(int id) {
-        taskDaoImp.remove(id);
+    public boolean delete(int id) {
+        return taskDaoImp.remove(id);
     }
 
     @Override
