@@ -1,4 +1,4 @@
-import { getTasks } from "./fetch.js"
+import { getTasks, deleteTask } from "./fetch.js"
 // Globals
 const TASK_LIST_CONTAINER_ID = "tasksList"
 const BUTTON_SHOW_TASKS_ID = "showTasks"
@@ -11,12 +11,41 @@ async function RetrieveAndBuildTasksList() {
     buildUlList(tasksList);
 }
 
-
 const btnShowTasks = document.getElementById(BUTTON_SHOW_TASKS_ID);
 btnShowTasks.addEventListener("click", async e => {
     RetrieveAndBuildTasksList();
 });
 
+function deleteListIfExists() {
+    let listContainer = document.getElementById(TASK_LIST_CONTAINER_ID)
+    if (listContainer != null)
+        listContainer.remove()
+}
+
+function AddEventListenerToTaskList() {
+    const taskContainer = document.querySelector("#" + TASK_LIST_CONTAINER_ID)
+    taskContainer.addEventListener('click', e => {
+        const taskOptionClass = JSON.stringify(e.target.className)
+        const currentTaskIdClicked = e.target.parentElement.id
+        const isOneOptionClicked = taskOptionClass.includes("remove") || taskOptionClass.includes("edit")
+        if (isOneOptionClicked) {
+            handleTaskOptions(taskOptionClass, currentTaskIdClicked)
+            RetrieveAndBuildTasksList();
+        }
+    })
+}
+
+function handleTaskOptions(taskOptionClass, currentTaskIdClicked) {
+    if (taskOptionClass.includes("remove")) {
+        const idExtracted = currentTaskIdClicked.replace(/[^0-9]/g, '');
+        deleteTask(idExtracted)
+        console.log(`Task with id=${idExtracted} has been removed...`)
+    }
+    if (taskOptionClass.includes("edit")) {
+        const idExtracted = currentTaskIdClicked.replace(/[^0-9]/g, '');
+        console.log(`Task with id=${idExtracted} has been edited...`)
+    }
+}
 
 function buildUlList(listOfObjects) {
     if (!Array.isArray(listOfObjects))
@@ -47,16 +76,7 @@ function buildUlList(listOfObjects) {
         li.appendChild(imgRemove)
         li.appendChild(imgUpdate)
     }
-
-    // TODO: Remove the belowed log when it is finished
-    console.log(listOfObjects)
+    AddEventListenerToTaskList();
 }
-
-function deleteListIfExists() {
-    let listContainer = document.getElementById(TASK_LIST_CONTAINER_ID)
-    if (listContainer != null)
-        listContainer.remove()
-}
-
 
 RetrieveAndBuildTasksList()
