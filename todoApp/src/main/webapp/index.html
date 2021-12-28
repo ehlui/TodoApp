@@ -12,7 +12,15 @@
     <h1>Hello from the root!</h1>
 
     <div class="container">
-        <div id="showTasks" style="display: inline-block;">&#128260;</div>
+        <div id="showTasks" style="display: inline-block;cursor: crosshair;">&#128260;</div>
+        <div id="addTask" style="display: inline-block;cursor: crosshair;">&#10133;</div>
+        <div id="formAddTask" style="display: none;">
+            <label for="taskName">Task:</label>
+            <input type="text" id="taskName" name="taskName">
+            <label for="taskDesc">Description:</label>
+            <input type="text" id="taskDesc" name="taskDesc">
+            <span id="sumbitNewTask">&#10133;</span>
+        </div>
     </div>
 
 

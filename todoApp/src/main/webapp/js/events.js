@@ -1,10 +1,12 @@
-import { getTasks, deleteTask } from "./fetch.js"
+import { getTasks, deleteTask, createTask } from "./fetch.js"
 // Globals
 const TASK_LIST_CONTAINER_ID = "tasksList"
 const BUTTON_SHOW_TASKS_ID = "showTasks"
 const CONTAINER_SELECTOR = "div.container"
 
-
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 async function RetrieveAndBuildTasksList() {
     deleteListIfExists()
     const tasksList = await getTasks()
@@ -13,7 +15,7 @@ async function RetrieveAndBuildTasksList() {
 
 const btnShowTasks = document.getElementById(BUTTON_SHOW_TASKS_ID);
 btnShowTasks.addEventListener("click", async e => {
-    RetrieveAndBuildTasksList();
+    RetrieveAndBuildTasksList()
 });
 
 function deleteListIfExists() {
@@ -39,11 +41,13 @@ function handleTaskOptions(taskOptionClass, currentTaskIdClicked) {
     if (taskOptionClass.includes("remove")) {
         const idExtracted = currentTaskIdClicked.replace(/[^0-9]/g, '');
         deleteTask(idExtracted)
+        sleep(2000).then(() => { RetrieveAndBuildTasksList(); });
         console.log(`Task with id=${idExtracted} has been removed...`)
     }
     if (taskOptionClass.includes("edit")) {
         const idExtracted = currentTaskIdClicked.replace(/[^0-9]/g, '');
         console.log(`Task with id=${idExtracted} has been edited...`)
+        sleep(2000).then(() => { RetrieveAndBuildTasksList(); });
     }
 }
 
@@ -79,4 +83,33 @@ function buildUlList(listOfObjects) {
     AddEventListenerToTaskList();
 }
 
-RetrieveAndBuildTasksList()
+
+// Add new task
+const addClickable = document.getElementById("addTask")
+addClickable.addEventListener('click', e => {
+    const addFormContainer = document.getElementById("formAddTask")
+    const displayValueToggle = addFormContainer.style.display === 'none' ? '' : 'none';
+    addFormContainer.style.display = displayValueToggle
+})
+
+const sumbitNewTask = document.getElementById("sumbitNewTask")
+sumbitNewTask.addEventListener('click', e => {
+    const addFormContainer = document.getElementById("formAddTask")
+    let taskNameInput = document.getElementById('taskName')
+    let taskDescInput = document.getElementById('taskDesc')
+
+    let taskName = taskNameInput.value
+    let taskDesc = taskDescInput.value
+    createTask(taskName, taskDesc)
+
+    console.log("New task added=[name : " + taskName + ", description : " + taskDesc + "]")
+
+    taskNameInput.value = ""
+    taskDescInput.value = ""
+
+    sleep(2000).then(() => { RetrieveAndBuildTasksList(); });
+    addFormContainer.style.display = 'none'
+})
+
+
+RetrieveAndBuildTasksList();
