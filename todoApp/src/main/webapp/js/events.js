@@ -1,4 +1,5 @@
 import { getTasks, deleteTask, createTask, updateTask } from "./fetch.js"
+
 // Globals
 const TASK_LIST_CONTAINER_ID = "tasksList"
 const BUTTON_SHOW_TASKS_ID = "showTasks"
@@ -43,6 +44,9 @@ function buildEditForm(taskId) {
     let tasksToEditActived = document.querySelectorAll(TASK_EDIT_FORM_SELECTOR)
     if (tasksToEditActived.length > 0) return
 
+    const taskNameSelected = document.querySelector("#" + taskId + " .name")
+    const taskDescSelected = document.querySelector("#" + taskId + " .desc")
+
     let itemContainer = document.getElementById(taskId)
     let divEditTask = document.createElement('div');
     let labelName = document.createElement('label');
@@ -62,6 +66,9 @@ function buildEditForm(taskId) {
     inputDesc.setAttribute("type", "text")
     inputDesc.setAttribute("id", "editTaskDesc")
     inputDesc.setAttribute("class", "editTaskDesc")
+
+    inputName.value = taskNameSelected.innerText
+    inputDesc.value = taskDescSelected.innerText
 
     spanEdit.innerHTML = `&#10133;`
     spanRemoveEditForm.innerHTML = `&#10060;`
@@ -84,19 +91,25 @@ function buildEditForm(taskId) {
         let tasksToEditActived = document.querySelector(TASK_EDIT_FORM_SELECTOR)
         tasksToEditActived.remove()
     })
+
     spanEdit.addEventListener('click', e => {
         e.preventDefault();
         const idExtracted = taskId.replace(/[^0-9]/g, '');
+        const taskNameSelected = document.querySelector("#" + taskId + " .name")
+        const taskDescSelected = document.querySelector("#" + taskId + " .desc")
         let editTaskNameSelector = document.querySelector("#" + taskId + " input.editTaskName")
         let editTaskDescSelector = document.querySelector("#" + taskId + " input.editTaskDesc")
-
-        let newTaskName = editTaskNameSelector.value
-        let newTaskDesc = editTaskDescSelector.value
-
-        updateTask(idExtracted, newTaskName, newTaskDesc)
         let tasksToEditActived = document.querySelector(TASK_EDIT_FORM_SELECTOR)
+
+        let newTaskName = editTaskNameSelector.value == '' ? taskNameSelected : editTaskNameSelector.value;
+        let newTaskDesc = editTaskDescSelector.value == '' ? taskDescSelected : editTaskDescSelector.value;
+
+        if (newTaskName != taskNameSelected.innerText || newTaskDesc != taskDescSelected.innerText) {
+            updateTask(idExtracted, newTaskName, newTaskDesc)
+            sleep(2000).then(() => { RetrieveAndBuildTasksList(); });
+            console.log("Updated....")
+        }
         tasksToEditActived.remove()
-        sleep(2000).then(() => { RetrieveAndBuildTasksList(); });
     })
 
 }
@@ -130,19 +143,28 @@ function buildUlList(listOfObjects) {
 
     function renderProductList(element, index, arr) {
         let li = document.createElement('li');
+        let taskName = document.createElement('span');
+        let taskDesc = document.createElement('span');
+        let taskSeparator = document.createElement('span');
         let imgRemove = document.createElement('span');
         let imgUpdate = document.createElement('span');
 
+        taskName.setAttribute('class', 'name')
+        taskDesc.setAttribute('class', 'desc')
         imgRemove.setAttribute('class', 'remove')
         imgUpdate.setAttribute('class', 'edit')
         li.setAttribute('id', `item-${element.id}`);
 
-
+        taskName.innerText = element.name
+        taskDesc.innerText = element.description
+        taskSeparator.innerText = " :: "
         imgRemove.innerHTML = `&#10060;`
         imgUpdate.innerHTML = `&#9999;`
-        li.innerHTML = li.innerHTML + `${element.name} :: ${element.description}`;
 
         ul.appendChild(li);
+        li.appendChild(taskName)
+        li.appendChild(taskSeparator)
+        li.appendChild(taskDesc)
         li.appendChild(imgRemove)
         li.appendChild(imgUpdate)
     }
