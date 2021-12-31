@@ -12,3 +12,7 @@ todoApp/wars
 # dot-files
 .env
 .DS_Store
+
+# Python
+*-env
+!bulking/requeriments.txt
