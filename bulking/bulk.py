@@ -18,14 +18,14 @@ csv structure:
 """
 import requests, json, sys, os
 
-BASE_URI ='http://localhost'
+BASE_URI = 'http://localhost'
 PORT = 8118
-SERVICE_ENDPOINT ='todoApp/TaskService/'
-URL_SERVICE_ENDPOINT =f'{BASE_URI}:{PORT}/{SERVICE_ENDPOINT}'
+SERVICE_ENDPOINT = 'todoApp/TaskService/'
+URL_SERVICE_ENDPOINT = f'{BASE_URI}:{PORT}/{SERVICE_ENDPOINT}'
 
 
 def read_csv(fileName, delimiter = ';'):
-    with open(fileName,mode='r') as f:
+    with open(fileName, mode = 'r') as f:
         for line in f:
             if not line.isspace():
                 clean_pair_list = line.replace('\n','').split(delimiter)
@@ -35,9 +35,10 @@ def read_csv(fileName, delimiter = ';'):
                     }
 
 
-def parse_bulk_arg(bulk_elements = 10,file_extension = '.csv'):
+def parse_bulk_arg(bulk_elements = 10, file_extension = '.csv'):
     if len(sys.argv) > 1:
         input_arg = sys.argv[1]
+
         if file_extension in input_arg:
             is_file = os.path.isfile(input_arg)
             if is_file:	
@@ -53,7 +54,7 @@ def parse_bulk_arg(bulk_elements = 10,file_extension = '.csv'):
             return bulk_elements,  None
     return None, None
 
-def post(payload = None):
+def post(payload):
     response = requests.post (
             URL_SERVICE_ENDPOINT, data = json.dumps(payload)
     )
@@ -63,14 +64,13 @@ def post(payload = None):
 
 def bulk_by_range(num):
     for e in range(num):
-        payload = { "name" : f"{e}", "description": f"example-{e}" }
-        post(payload)
+        post({ "name" : f"{e}", "description": f"example-{e}" })
 
 def bulk_by_csv(csv_generator):
     for line in csv_generator:
         post(payload=line)
 
-def bulk(elements_num = None, csv_generator=None):
+def bulk(elements_num, csv_generator):
     if elements_num is not None:
         bulk_by_range(elements_num)
     if csv_generator is not None:
